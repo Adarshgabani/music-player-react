@@ -33,7 +33,12 @@ function App() {
     setSongInfo({
       ...songInfo, currentTime, duration, animationPercentage
     })
+  }
 
+  const songEndHandler = async () => {
+    const currentIndex = songs.findIndex((songState) => songState.id === currentSong.id)
+    await setCurrentSong(songs[(currentIndex + 1) % songs.length])
+    if (isPlaying) audioRef.current.play()
 
   }
   return (
@@ -42,7 +47,7 @@ function App() {
       <Song currentSong={currentSong} />
       <Player songs={songs} setSongs={setSongs} songInfo={songInfo} setSongInfo={setSongInfo} audioRef={audioRef} isPlaying={isPlaying} setIsPlaying={setIsPlaying} currentSong={currentSong} setCurrentSong={setCurrentSong} />
       <Library libraryStatus={libraryStatus} setSongs={setSongs} isPlaying={isPlaying} audioRef={audioRef} setCurrentSong={setCurrentSong} songs={songs} />
-      <audio onLoadedMetadata={timeUpdateHandler} onTimeUpdate={timeUpdateHandler} ref={audioRef} src={currentSong.audio}></audio>
+      <audio onLoadedMetadata={timeUpdateHandler} onTimeUpdate={timeUpdateHandler} ref={audioRef} src={currentSong.audio} onEnded={songEndHandler} ></audio>
 
     </div>
   );
