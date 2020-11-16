@@ -1,28 +1,27 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 
-const Player = ({ currentSong, setCurrentSong, isPlaying, setIsPlaying, audioRef, songInfo, setSongInfo, songs, setSongs }) => {
-    //useEffect
-    useEffect(() => {
-        //set Song State
-        const newSongs = songs.map((songState) => {
-            if (songState.id === currentSong.id) {
-                return {
-                    ...songState,
-                    active: true,
-                }
-            } else {
-                return {
-                    ...songState,
-                    active: false,
-                }
-            }
-        });
-        setSongs(newSongs);
-        if (isPlaying) audioRef.current.play()
-    }, [currentSong])
-    //Event /Handlers
+const Player = ({ activeLibraryHandler, currentSong, setCurrentSong, isPlaying, setIsPlaying, audioRef, songInfo, setSongInfo, songs, setSongs }) => {
+
+    //Event Handlers
+    // const activeLibraryHandler = (nextprev) => {
+    //     const newSongs = songs.map((songState) => {
+    //         if (songState.id === nextprev.id) {
+    //             return {
+    //                 ...songState,
+    //                 active: true,
+    //             }
+    //         } else {
+    //             return {
+    //                 ...songState,
+    //                 active: false,
+    //             }
+    //         }
+    //     });
+    //     setSongs(newSongs);
+    //     if (isPlaying) audioRef.current.play()
+    // }
     const playSongHandler = () => {
 
         if (isPlaying) {
@@ -48,14 +47,19 @@ const Player = ({ currentSong, setCurrentSong, isPlaying, setIsPlaying, audioRef
     const skipHandler = async (direction) => {
         const currentIndex = songs.findIndex((songState) => songState.id === currentSong.id)
         if (direction === 'skip-forward') {
-            await setCurrentSong(songs[(currentIndex + 1) % songs.length])
+            await setCurrentSong(songs[(currentIndex + 1) % songs.length]);
+            activeLibraryHandler(songs[(currentIndex + 1) % songs.length]);
         }
         if (direction === 'skip-back') {
             if ((currentIndex - 1) % songs.length === -1) {
                 await setCurrentSong(songs[songs.length - 1]);
+                activeLibraryHandler(songs[songs.length - 1]);
+
                 return;
             }
-            await setCurrentSong(songs[(currentIndex - 1)])
+            await setCurrentSong(songs[(currentIndex - 1)]);
+            activeLibraryHandler(songs[(currentIndex - 1)]);
+
         }
     }
     //add  Styles
